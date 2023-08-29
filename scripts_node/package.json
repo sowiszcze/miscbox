@@ -1,0 +1,36 @@
+{
+  "name": "scripts_node",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Collection of handy scripts in ECMAScript for Node.js",
+  "scripts": {
+    "build-all": "tsc",
+    "docker-port": "ts-node ./src/docker-port.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sowiszcze/miscbox.git"
+  },
+  "keywords": [
+    "cli",
+    "console",
+    "misc",
+    "scripts"
+  ],
+  "author": "Piotr Sowa",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sowiszcze/miscbox/issues"
+  },
+  "homepage": "https://github.com/sowiszcze/miscbox#readme",
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "commander": "^11.0.0",
+    "sqlite3": "^5.1.6"
+  },
+  "devDependencies": {
+    "@types/node": "^20.5.7",
+    "@types/sqlite3": "^3.1.8",
+    "typescript": "^5.2.2"
+  }
+}
