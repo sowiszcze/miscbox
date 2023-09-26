@@ -1,0 +1,33 @@
+version: "3.9"
+# Vaultwarden stack
+# Page: https://www.vaultwarden.net/
+# Code: https://github.com/dani-garcia/vaultwarden
+# Alternative implementation of the Bitwarden server API written in Rust and
+# compatible with upstream Bitwarden clients*, perfect for self-hosted
+# deployment where running the official resource-heavy service might not be
+# ideal.
+
+services:
+  app:
+    image: vaultwarden/server:alpine
+    container_name: vaultwarden
+    restart: unless-stopped
+    ports:
+      - 31103:80
+      - 3102:3102
+    environment:
+      - WEBSOCKET_ENABLED
+      - ADMIN_TOKEN
+      - DOMAIN
+      - SIGNUPS_ALLOWED
+      # - SMTP_HOST
+      # - SMTP_FROM
+      # - SMTP_PORT
+      # - SMTP_SECURITY
+      # - SMTP_USERNAME
+      # - SMTP_PASSWORD
+    volumes:
+      - data:/data/
+
+volumes:
+  data:

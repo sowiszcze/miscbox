@@ -1,0 +1,25 @@
+version: "3.7"
+# Eclipse Mosquitto™ stack
+# Page: https://mosquitto.org/
+# Code: https://github.com/eclipse/mosquitto
+# Eclipse Mosquitto is an open source (EPL/EDL licensed) message broker that
+# implements the MQTT protocol versions 5.0, 3.1.1 and 3.1. Mosquitto is
+# lightweight and is suitable for use on all devices from low power single
+# board computers to full servers.
+
+services:
+  app:
+    image: eclipse-mosquitto
+    container_name: mqtt5
+    ports:
+      - "1883:1883" # default mqtt port
+      - "9001:9001" # default mqtt port for websockets
+    volumes:
+      - config:/mosquitto/config:rw
+      - data:/mosquitto/data:rw
+      - log:/mosquitto/log:rw
+
+volumes:
+  config:
+  data:
+  log:

@@ -399,3 +399,4 @@ FodyWeavers.xsd
 
 # Custom
 store.db
+templates/docker-compose/*.env

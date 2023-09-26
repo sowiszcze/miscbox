@@ -1,0 +1,24 @@
+version: "3.9"
+# Trilium Notes stack
+# Page: 
+# Code: https://github.com/zadam/trilium
+# Trilium Notes is a hierarchical note taking application
+# with focus on building large personal knowledge bases
+
+services:
+  app:
+    image: zadam/trilium:latest
+    environment:
+      - TZ=Europe/Warsaw
+    ports:
+      - 30650:8080
+    networks:
+      - trilium-net
+    volumes:
+      - data:/home/node/trilium-data
+
+volumes:
+  data:
+
+networks:
+  trilium-net:

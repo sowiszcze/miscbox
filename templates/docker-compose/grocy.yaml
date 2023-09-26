@@ -1,0 +1,74 @@
+version: '3.8'
+# Grocy stack
+# Page: https://grocy.info/
+# Code: https://github.com/grocy/grocy
+# ERP beyond your fridge - Grocy is a web-based self-hosted
+# groceries & household management solution for your home
+
+services:
+
+  app:
+    image: grocy/frontend:v3.3.2
+    depends_on:
+      - backend
+    environment:
+      - GROCY_CALENDAR_FIRST_DAY_OF_WEEK
+      - GROCY_CULTURE
+      - GROCY_CURRENCY
+      - GROCY_ENTRY_PAGE
+      - GROCY_FEATURE_FLAG_CALENDAR
+      - GROCY_FEATURE_FLAG_CHORES
+      - GROCY_FEATURE_FLAG_BATTERIES
+      - GROCY_FEATURE_FLAG_SHOPPINGLIST
+      - GROCY_FEATURE_FLAG_STOCK
+      - GROCY_FEATURE_FLAG_TASKS
+      - GROCY_MEAL_PLAN_FIRST_DAY_OF_WEEK
+      - GROCY_MODE
+      - MAX_UPLOAD
+      - PHP_MAX_FILE_UPLOAD
+      - PHP_MAX_POST
+      - PHP_MEMORY_LIMIT
+    ports:
+      - '30435:8080'
+    tmpfs:
+      - /tmp
+    restart: unless-stopped
+
+  backend:
+    image: grocy/backend:v3.3.2
+    expose:
+      - '9000'
+    read_only: true
+    tmpfs:
+      - /tmp
+    volumes:
+      - app_data:/var/www/data
+    restart: unless-stopped
+  
+  recipe-buddy_app:
+    image: ghcr.io/georgegebbett/recipe-buddy-frontend:latest
+    ports:
+      - '31920:80'
+    depends_on:
+      - recipe-buddy_backend
+      - frontend
+    restart: unless-stopped
+      
+  recipe-buddy_backend:
+    image: ghcr.io/georgegebbett/recipe-buddy-backend:latest
+    depends_on:
+      - mongo
+    restart: unless-stopped
+      
+  mongo:
+    image: mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME
+      - MONGO_INITDB_ROOT_PASSWORD
+    volumes:
+      - mongo_db:/data/db
+    restart: unless-stopped
+    
+volumes:
+  mongo_db:
+  app_data:

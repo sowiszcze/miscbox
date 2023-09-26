@@ -1,0 +1,43 @@
+version: '3.9'
+# restic stack
+# Page: https://restic.net/
+# Code: https://github.com/restic/restic
+# Prometheus, a Cloud Native Computing Foundation project, is a systems and
+# service monitoring system. It collects metrics from configured targets at
+# given intervals, evaluates rule expressions, displays the results, and can
+# trigger alerts when specified conditions are observed.
+
+services:
+  api:
+    image: restic/eclipse-temurin:0.11.0
+    volumes:
+      - /var/restic:/data
+    environment:
+      - RESTIC_PASSWORD
+    ports:
+      - 30399:8000
+    
+x-disabled:
+  restic-browser:
+    image: 
+
+  app:
+    image: eclipse-temurin:8u362-b09-jre-alpine
+    restart: always
+    volumes:
+      - /var/restic:/data
+    environment:
+      - RESTIC_PASSWORD
+    command: ["java", "-Drestic.repository=/data", "-jar", "restic-reader.jar"]
+
+  interface:
+    image: moritzheiber/restic-web:latest
+    restart: always
+    environment:
+      - RESTIC_REPOSITORY
+      - RESTIC_PASSWORD
+      - LISTEN_ADDR
+    volumes:
+      - /var/restic:/data
+    ports:
+      - 30913:8000

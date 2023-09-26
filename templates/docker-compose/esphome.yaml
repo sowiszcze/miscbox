@@ -1,0 +1,25 @@
+version: '3'
+# ESPHome stack
+# Page: https://esphome.io/
+# Code: https://github.com/esphome/esphome
+# ESPHome is a system to control your ESP8266/ESP32 and RP2040 by simple yet
+# powerful configuration files and control them remotely through Home
+# Automation systems.
+
+services:
+  app:
+    container_name: esphome
+    image: ghcr.io/esphome/esphome
+    volumes:
+      - config:/config
+      - /etc/localtime:/etc/localtime:ro
+    restart: always
+    privileged: true
+    network_mode: host
+    environment:
+      - USERNAME
+      - PASSWORD
+
+volumes:
+  config:
+  

@@ -1,0 +1,39 @@
+version: '3.9'
+# AdGuard Home stack
+# Page: https://adguard.com/en/adguard-home/overview.html
+# Code: https://github.com/AdguardTeam/AdGuardHome
+# AdGuard Home is a network-wide software for blocking ads & tracking. After
+# you set it up, it’ll cover ALL your home devices, and you don’t need any
+# client-side software for that. With the rise of Internet-Of-Things and
+# connected devices, it becomes more and more important to be able to control
+# your whole network.
+
+services:
+
+  app:
+    image: adguard/adguardhome
+    volumes:
+      - /etc/adguard:/opt/adguardhome/conf
+      - work:/opt/adguardhome/work
+    ports:
+      - 53:53/tcp # DNS
+      - 53:53/udp # DNS
+      - 67:67/udp # DHCP
+      - 68:68/tcp # DHCP
+      - 68:68/udp # DHCP
+      - 31877:80/tcp # HTTPS/DNS-over-HTTPS
+      - 32201:443/tcp # HTTPS/DNS-over-HTTPS
+      - 32201:443/udp # HTTPS/DNS-over-HTTPS
+      - 30512:3000/tcp # Web UI
+      - 853:853/tcp # DNS-over-TLS
+      - 784:784/udp # DNS-over-QUIC
+      - 853:853/udp # DNS-over-QUIC
+      - 8853:8853/udp # DNS-over-QUIC
+      - 5443:5443/tcp # DNSCrypt
+      - 5443:5443/udp # DNSCrypt
+    restart: unless-stopped
+    privileged: true
+    network_mode: host
+
+volumes:
+  work:

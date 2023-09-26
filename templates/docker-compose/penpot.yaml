@@ -1,0 +1,101 @@
+version: "3.9"
+# Penpot stack
+# Page: https://penpot.app/
+# Code: https://github.com/penpot
+# Penpot is the first Open Source design and prototyping platform meant for
+# cross-domain teams. Non dependent on operating systems, Penpot is web based
+# and works with open standards (SVG). Penpot invites designers all over the
+# world to fall in love with open source while getting developers excited
+# about the design process in return.
+
+services:
+
+  app:
+    image: penpotapp/frontend:1.18.1
+    restart: unless-stopped
+    ports:
+      - 30561:80
+    volumes:
+      - assets:/opt/data/assets
+    depends_on:
+      - backend
+      - exporter
+    networks:
+      - penpot
+    environment:
+      - PENPOT_FLAGS
+
+  backend:
+    image: penpotapp/backend:1.18.1
+    restart: unless-stopped
+    volumes:
+      - assets:/opt/data/assets
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - penpot
+    environment:
+      - PENPOT_FLAGS
+      - PENPOT_SECRET_KEY
+      - PENPOT_PREPL_HOST
+      - PENPOT_PUBLIC_URI
+      - PENPOT_DATABASE_URI
+      - PENPOT_DATABASE_USERNAME
+      - PENPOT_DATABASE_PASSWORD
+      - PENPOT_REDIS_URI
+      - PENPOT_ASSETS_STORAGE_BACKEND
+      - PENPOT_STORAGE_ASSETS_FS_DIRECTORY
+      - PENPOT_TELEMETRY_ENABLED
+      - PENPOT_SMTP_DEFAULT_FROM
+      - PENPOT_SMTP_DEFAULT_REPLY_TO
+      - PENPOT_SMTP_HOST
+      - PENPOT_SMTP_PORT
+      - PENPOT_SMTP_USERNAME
+      - PENPOT_SMTP_PASSWORD
+      - PENPOT_SMTP_TLS
+      - PENPOT_SMTP_SSL
+
+  exporter:
+    image: penpotapp/exporter:1.18.1
+    restart: unless-stopped
+    networks:
+      - penpot
+    environment:
+      - PENPOT_PUBLIC_URI
+      - PENPOT_REDIS_URI
+
+  postgres:
+    image: postgres:15
+    restart: unless-stopped
+    stop_signal: SIGINT
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    networks:
+      - penpot
+    environment:
+      - POSTGRES_INITDB_ARGS
+      - POSTGRES_DB
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+
+  redis:
+    image: redis:7
+    restart: unless-stopped
+    networks:
+      - penpot
+
+  mailcatch:
+    image: sj26/mailcatcher:latest
+    restart: unless-stopped
+    ports:
+      - "30974:1080"
+    networks:
+      - penpot
+      
+networks:
+  penpot:
+
+volumes:
+  postgres:
+  assets:

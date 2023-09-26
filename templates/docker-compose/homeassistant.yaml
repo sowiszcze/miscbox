@@ -1,0 +1,26 @@
+version: '3.9'
+# Home Assistant stack
+# Page: https://www.home-assistant.io/
+# Code: https://github.com/home-assistant/core
+# Open source home automation that puts local control and privacy first.
+# Powered by a worldwide community of tinkerers and DIY enthusiasts. Perfect
+# to run on a Raspberry Pi or a local server.
+
+services:
+  app:
+    container_name: homeassistant
+    image: "ghcr.io/home-assistant/home-assistant:stable"
+    volumes:
+      - /etc/homeassistant:/config
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+    privileged: true
+    network_mode: host
+    healthcheck:
+      test: "curl -f http://localhost:8123/ || exit 1"
+# Disabled device usage until connected
+#    devices:
+#      - /dev/ttyUSB0:/dev/ttyUSB0
+# In case of issues with jemalloc
+#    environment:
+#      - DISABLE_JEMALLOC: true

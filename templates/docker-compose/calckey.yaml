@@ -1,0 +1,66 @@
+version: "3"
+# Calckey stack
+# Page: https://i.calckey.cloud/
+# Code: https://codeberg.org/naskya/calckey
+# Calckey is an open source, decentralized social media platform that's free
+# forever! A greatly enhanced fork of Misskey with better UI/UX, security,
+# features, and more!
+
+services:
+  app:
+    image: docker.io/thatonecalculator/calckey
+    restart: unless-stopped
+    depends_on:
+      - db
+      - redis
+      - sonic
+    ports:
+      - "30570:3000"
+    networks:
+      - calcnet
+    environment:
+      - NODE_ENV
+      - POSTGRES_PASSWORD
+      - POSTGRES_USER
+      - POSTGRES_DB
+    volumes:
+      - files:/calckey/files
+      - /var/calckey:/calckey/.config:ro
+
+  redis:
+    restart: unless-stopped
+    image: docker.io/redis:7.0-alpine
+    networks:
+      - calcnet
+    volumes:
+      - redis:/data
+
+  db:
+    restart: unless-stopped
+    image: docker.io/postgres:12.2-alpine
+    networks:
+      - calcnet
+    environment:
+      - POSTGRES_PASSWORD
+      - POSTGRES_USER
+      - POSTGRES_DB
+    volumes:
+      - db:/var/lib/postgresql/data
+
+  sonic:
+    restart: unless-stopped
+    image: docker.io/valeriansaliou/sonic:v1.4.0
+    networks:
+      - calcnet
+    volumes:
+      - sonic:/var/lib/sonic/store
+      - /var/calckey/sonic.cfg:/etc/sonic.cfg
+
+networks:
+  calcnet:
+  
+volumes:
+  sonic:
+  db:
+  redis:
+  files:

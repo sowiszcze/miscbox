@@ -1,0 +1,58 @@
+version: '3.9'
+# wallabag stack
+# Page: https://wallabag.org/
+# Code: https://github.com/wallabag
+# wallabag is a self hostable application for saving web pages:
+# Save and classify articles. Read them later. Freely.
+
+services:
+  app:
+    image: wallabag/wallabag:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD
+      - SYMFONY__ENV__DATABASE_DRIVER
+      - SYMFONY__ENV__DATABASE_HOST
+      - SYMFONY__ENV__DATABASE_PORT
+      - SYMFONY__ENV__DATABASE_NAME
+      - SYMFONY__ENV__DATABASE_USER
+      - SYMFONY__ENV__DATABASE_PASSWORD
+      - SYMFONY__ENV__DATABASE_CHARSET
+      - SYMFONY__ENV__DATABASE_TABLE_PREFIX
+      - SYMFONY__ENV__MAILER_DSN
+      - SYMFONY__ENV__FROM_EMAIL
+      - SYMFONY__ENV__DOMAIN_NAME
+      - SYMFONY__ENV__SERVER_NAME
+    ports:
+      - "30468:80"
+    volumes:
+      - assets:/var/www/wallabag/web/assets/images
+    healthcheck:
+      test: ["CMD", "wget" ,"--no-verbose", "--tries=1", "--spider", "http://localhost"]
+      interval: 1m
+      timeout: 3s
+    depends_on:
+      - db
+      - redis
+      
+  db:
+    image: mariadb:11
+    environment:
+      - MYSQL_ROOT_PASSWORD
+      - MARIADB_MYSQL_LOCALHOST_USER
+    volumes:
+      - db:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/healthcheck.sh", "--su=mysql", "--connect", "--innodb_initialized"]
+      interval: 20s
+      timeout: 3s
+      
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 20s
+      timeout: 3s
+
+volumes:
+  db:
+  assets:

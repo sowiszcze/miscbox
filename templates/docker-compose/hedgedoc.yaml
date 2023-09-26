@@ -1,0 +1,42 @@
+version: '3.8'
+# HedgeDoc stack
+# Page: https://hedgedoc.org/
+# Code: https://github.com/hedgedoc/hedgedoc
+# HedgeDoc - Ideas grow better together
+# HedgeDoc lets you create real-time collaborative markdown notes.
+
+services:
+  database:
+    image: postgres:13.10-alpine
+    environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
+    volumes:
+      - database:/var/lib/postgresql/data
+    restart: always
+  app:
+    # Make sure to use the latest release from https://hedgedoc.org/latest-release
+    image: quay.io/hedgedoc/hedgedoc:1.9.7
+    environment:
+      - CMD_DB_URL
+      - CMD_URL_ADDPORT
+      - UPLOADS_MODE
+      - CMD_IMAGE_UPLOAD_TYPE
+      - CMD_GITHUB_CLIENTID
+      - CMD_GITHUB_CLIENTSECRET
+      - CMD_GOOGLE_CLIENTID
+      - CMD_GOOGLE_CLIENTSECRET
+      - NODE_ENV
+      - CMD_ALLOW_ORIGIN
+      - CMD_CSP_ENABLE
+    volumes:
+      - uploads:/hedgedoc/public/uploads
+    ports:
+      - "30515:3000"
+    restart: always
+    depends_on:
+      - database
+volumes:
+  database:
+  uploads:

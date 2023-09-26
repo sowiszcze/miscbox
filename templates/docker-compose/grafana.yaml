@@ -1,0 +1,22 @@
+version: "3.9"
+# Grafana stack
+# Page: https://grafana.com/
+# Code: https://github.com/grafana/grafana
+# The open and composable observability and data visualization platform.
+# Visualize metrics, logs, and traces from multiple sources like Prometheus,
+# Loki, Elasticsearch, InfluxDB, Postgres and many more.
+
+services:
+  app:
+    image: grafana/grafana-oss
+    container_name: grafana
+    restart: unless-stopped
+    healthcheck:
+      test: "curl -f http://localhost:3000/ || exit 1"
+    ports:
+     - '30423:3000'
+    volumes:
+      - data:/var/lib/grafana
+
+volumes:
+  data:

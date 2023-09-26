@@ -1,0 +1,45 @@
+version: "3.8"
+# LinkStack stack
+# Page: https://linkstack.org/
+# Code: https://github.com/LinkStackOrg/LinkStack
+# LinkStack is a highly customizable link sharing platform with an intuitive,
+# easy to use user interface.
+
+services:
+
+  app:
+    hostname: 'linkstack'
+    image: linkstackorg/linkstack:latest
+    environment:
+      - TZ
+      - SERVER_ADMIN
+      - HTTPS_SERVER_NAME
+      - LOG_LEVEL
+      - PHP_MEMORY_LIMIT
+      - UPLOAD_MAX_FILESIZE
+    volumes:
+      - data:/htdocs
+    ports:
+      - '30761:443'
+    restart: unless-stopped
+    depends_on:
+      - db
+      
+  db:
+    image: mariadb:11
+    environment:
+      - MARIADB_ROOT_PASSWORD
+      - MARIADB_MYSQL_LOCALHOST_USER
+      - MARIADB_DATABASE
+      - MARIADB_USER
+      - MARIADB_PASSWORD
+    volumes:
+      - db:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/healthcheck.sh", "--su=mysql", "--connect", "--innodb_initialized"]
+      interval: 20s
+      timeout: 3s
+
+volumes:
+  data:
+  db:

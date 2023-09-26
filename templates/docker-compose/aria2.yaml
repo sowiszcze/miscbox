@@ -1,0 +1,13 @@
+version: '3.9'
+# Aria2/-ng stack
+# Page: https://octoprint.org/
+# Code: https://github.com/OctoPrint/OctoPrint
+# aria2 is a lightweight multi-protocol & multi-source command-line download
+# utility. It supports HTTP/HTTPS, FTP, SFTP, BitTorrent and Metalink. aria2
+# can be manipulated via built-in JSON-RPC and XML-RPC interfaces.
+
+services:
+
+  daemon:
+    image: p3terx/aria2-pro
+    
