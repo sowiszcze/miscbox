@@ -1,11 +1,11 @@
 {
   "name": "scripts_node",
   "version": "1.0.0",
-  "type": "module",
   "description": "Collection of handy scripts in ECMAScript for Node.js",
   "scripts": {
     "build-all": "tsc",
-    "docker-port": "ts-node ./src/docker-port.ts"
+    "docker-port": "ts-node ./src/docker-port.ts",
+    "docker-port-c": "node ./dist/docker-port.js"
   },
   "repository": {
     "type": "git",
@@ -24,13 +24,14 @@
   },
   "homepage": "https://github.com/sowiszcze/miscbox#readme",
   "dependencies": {
-    "chalk": "^5.3.0",
+    "chalk": "^4.1.2",
     "commander": "^11.0.0",
     "sqlite3": "^5.1.6"
   },
   "devDependencies": {
     "@types/node": "^20.5.7",
     "@types/sqlite3": "^3.1.8",
+    "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
   }
 }

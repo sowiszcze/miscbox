@@ -1,14 +1,14 @@
 #!/usr/bin/env ts-node
 import { program, Option } from 'commander'; // https://github.com/tj/commander.js#readme
-import sqlite3 from 'sqlite3'; // https://github.com/TryGhost/node-sqlite3/wiki/API
+import { Database } from 'sqlite3'; // https://github.com/TryGhost/node-sqlite3/wiki/API
 import chalk from 'chalk'; // https://github.com/chalk/chalk#usage
 
 var db_file = process.env.MISCBOX_DB || '../store.db';
-var database : sqlite3.Database;
+var database : Database;
 
-const getConnection = function() : sqlite3.Database {
+const getConnection = function() : Database {
 
-    database = database || new sqlite3.Database(db_file);
+    database = database || new Database(db_file);
 
     return database;
 
@@ -27,8 +27,8 @@ const calculate = function(serviceName : string, options : Object) : Promise<voi
         return Promise.resolve();
     }
 
-    let store = !options.nostore && !options.anonymous;
-    let db;
+    let store = false;//!options.nostore && !options.anonymous;
+    let db : Database;
     if (!store) {
         console.log(chalk.yellow('Calculated port won\'t be saved.'));
     }
