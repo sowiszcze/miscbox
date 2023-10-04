@@ -1,7 +1,11 @@
-version: '3'
+version: '3.9'
+name: esphome
 # ESPHome stack
+
 # Page: https://esphome.io/
-# Code: https://github.com/esphome/esphome
+# Code: https://esphome.io/guides/getting_started_command_line
+# Repo: https://github.com/esphome/esphome
+
 # ESPHome is a system to control your ESP8266/ESP32 and RP2040 by simple yet
 # powerful configuration files and control them remotely through Home
 # Automation systems.
@@ -11,15 +15,12 @@ services:
     container_name: esphome
     image: ghcr.io/esphome/esphome
     volumes:
-      - config:/config
+      - /etc/esphome:/config
       - /etc/localtime:/etc/localtime:ro
     restart: always
     privileged: true
-    network_mode: host
+    network_mode: host # due to this, web interface is available on default port 6052
     environment:
       - USERNAME
       - PASSWORD
-
-volumes:
-  config:
-  
+      - ESPHOME_DASHBOARD_USE_PING # set to true if you want to use the web interface
