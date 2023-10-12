@@ -11,6 +11,7 @@ name: esphome
 # Automation systems.
 
 services:
+
   app:
     container_name: esphome
     image: ghcr.io/esphome/esphome

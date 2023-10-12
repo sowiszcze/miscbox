@@ -1,26 +1,30 @@
-version: "3.7"
+version: '3.9'
+name: node-red
 # Node-RED stack
+
 # Page: https://nodered.org/
+# Dckr: https://nodered.org/docs/getting-started/docker#docker-stack--docker-compose
 # Code: https://github.com/node-red
+
 # Node-RED is a programming tool for wiring together hardware devices, APIs
 # and online services in new and interesting ways. It provides a browser-based
 # editor that makes it easy to wire together flows using the wide range of
 # nodes in the palette that can be deployed to its runtime in a single-click.
 
 services:
+
   app:
+    container_name: node-red
     image: nodered/node-red:latest
     environment:
-      - TZ=Europe/Warsaw
+      - TZ
     ports:
-      - "30481:1880"
+      - 30481:1880
     networks:
       - node-red-net
     volumes:
-      - data:/data
+      - /srv/node-red:/data
 
-volumes:
-  data:
 
 networks:
   node-red-net:

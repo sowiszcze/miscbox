@@ -1,7 +1,11 @@
-version: "3.9"
+version: '3.9'
+name: netbootxyz
 # Netbootxyz stack
+
 # Page: https://netboot.xyz/
-# Code: https://github.com/netbootxyz/docker-netbootxyz
+# Code: https://github.com/netbootxyz/docker-netbootxyz/blob/master/docker-compose.yml.example
+# Repo: https://github.com/netbootxyz/docker-netbootxyz
+
 # netboot.xyz is a convenient place to boot into any type of operating system
 # or utility disk without the need of having to go spend time retrieving the
 # ISO just to run it. iPXE is used to provide a user friendly menu from within
@@ -11,14 +15,15 @@ version: "3.9"
 services:
 
   app:
+    container_name: netboot
     image: ghcr.io/netbootxyz/netbootxyz
     volumes:
       - /etc/netbootxyz:/config
-      - /var/netboot:/assets
+      - /srv/netboot:/assets
     ports:
-      - 3000:3000
-      - 69:69/udp
-      - 31394:80
+      - 3000:3000 # WebApp
+      - 69:69/udp # TFTP / nice
+      - 31394:80 # assets
     restart: unless-stopped
     cap_add: # More info: https://github.com/samdbmg/dhcp-netboot.xyz
       - NET_ADMIN

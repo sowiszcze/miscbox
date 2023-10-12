@@ -1,21 +1,26 @@
-version: '3.5'
+version: '3.9'
+name: jellyfin
 # Jellyfin stack
+
 # Page: https://jellyfin.org/
+# Dckr: https://jellyfin.org/docs/general/installation/container#using-docker-compose
 # Code: https://github.com/jellyfin/jellyfin
+
 # Jellyfin is the volunteer-built media solution that puts you in control of
 # your media. Stream to any device from your own server, with no strings
 # attached. Your media, your server, your way.
 
 services:
+
   app:
-    image: jellyfin/jellyfin
     container_name: jellyfin
-    network_mode: 'host'
+    image: jellyfin/jellyfin
+    network_mode: host # No need to expose port 8096 due to this
     volumes:
       - /etc/jellyfin:/config
-      - /media/cache:/cache
+      - /srv/jellyfin/cache:/cache
       - /media/level1:/media
-    restart: 'unless-stopped'
+    restart: unless-stopped
     healthcheck:
       test: "curl -f http://localhost:8096/ || exit 1"
     # Optional - alternative address used for autodiscovery

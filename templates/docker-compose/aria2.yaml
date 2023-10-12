@@ -1,7 +1,11 @@
 version: '3.9'
+name: aria2
 # Aria2/-ng stack
-# Page: https://octoprint.org/
-# Code: https://github.com/OctoPrint/OctoPrint
+
+# Page: https://github.com/P3TERX/Aria2-Pro-Core
+# Dckr: https://github.com/P3TERX/Aria2-Pro-Docker/blob/master/docker-compose.yml
+# Code: https://github.com/P3TERX/Aria2-Pro-Docker
+
 # aria2 is a lightweight multi-protocol & multi-source command-line download
 # utility. It supports HTTP/HTTPS, FTP, SFTP, BitTorrent and Metalink. aria2
 # can be manipulated via built-in JSON-RPC and XML-RPC interfaces.
@@ -10,4 +14,39 @@ services:
 
   daemon:
     image: p3terx/aria2-pro
-    
+    container_name: aria2
+    environment:
+      - PUID
+      - PGID
+      - UMASK_SET
+      - RPC_SECRET
+      - RPC_PORT
+      - LISTEN_PORT
+      - DISK_CACHE
+      - IPV6_MODE
+      - UPDATE_TRACKERS
+      - CUSTOM_TRACKER_URL
+      - TZ
+    volumes:
+      - /etc/aria2:/config
+      - /media/downloads:/downloads
+    ports:
+      - 6800:6800 # JSON-RPC/XML-RPC server
+      - 6888:6888 # TCP port number for BitTorrent downloads
+    restart: unless-stopped
+    logging: # Since Aria2 will continue to generate logs, limit the log size to 1M to prevent your hard disk from running out of space.
+      driver: json-file
+      options:
+        max-size: 1m
+
+  webui:
+    container_name: ariang
+    image: p3terx/ariang
+    command: --port 6880 --ipv6
+    ports:
+      - 6880:6880
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: 1m

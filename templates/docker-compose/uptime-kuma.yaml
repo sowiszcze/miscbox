@@ -1,19 +1,21 @@
-version: "3.9"
+version: '3.9'
+name: uptime-kuma
 # Uptime Kuma stack
+
 # Page: https://uptime.kuma.pet/
+# Dckr: https://github.com/louislam/uptime-kuma/blob/master/docker/docker-compose.yml
 # Code: https://github.com/louislam/uptime-kuma
+
 # Uptime Kuma is an easy-to-use self-hosted monitoring tool.
 
 services:
+
   app:
+    container_name: kuma
     image: louislam/uptime-kuma:alpine
-    container_name: uptime-kuma
     restart: unless-stopped
     ports:
-      - "30936:3001"
+      - 30936:3001
     volumes:
-      - data:/app/data
+      - /srv/uptime-kuma:/app/data
       - /var/run/docker.sock:/var/run/docker.sock
-
-volumes:
-  data:

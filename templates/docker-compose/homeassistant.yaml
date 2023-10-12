@@ -1,21 +1,26 @@
 version: '3.9'
+name: homeassistant
 # Home Assistant stack
+
 # Page: https://www.home-assistant.io/
+# Dckr: https://www.home-assistant.io/installation/alternative#docker-compose
 # Code: https://github.com/home-assistant/core
+
 # Open source home automation that puts local control and privacy first.
 # Powered by a worldwide community of tinkerers and DIY enthusiasts. Perfect
 # to run on a Raspberry Pi or a local server.
 
 services:
+
   app:
     container_name: homeassistant
-    image: "ghcr.io/home-assistant/home-assistant:stable"
+    image: ghcr.io/home-assistant/home-assistant:stable
     volumes:
       - /etc/homeassistant:/config
       - /etc/localtime:/etc/localtime:ro
     restart: unless-stopped
     privileged: true
-    network_mode: host
+    network_mode: host # No need to expose port 8123 due to this
     healthcheck:
       test: "curl -f http://localhost:8123/ || exit 1"
 # Disabled device usage until connected
