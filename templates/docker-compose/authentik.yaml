@@ -1,0 +1,103 @@
+version: '3.9'
+name: authentik
+# Authentik stack
+
+# Page: https://goauthentik.io/
+# Dckr: https://goauthentik.io/docs/installation/docker-compose
+# Code: https://github.com/goauthentik/authentik
+
+# authentik is an open-source Identity Provider focused on flexibility and
+# versatility. You can use authentik in an existing environment to add support
+# for new protocols, implement sign-up/recovery/etc. in your application so
+# you don't have to deal with it, and many other things.
+
+services:
+
+  postgresql:
+    container_name: authentik-postgresql
+    hostname: postgresql
+    image: docker.io/library/postgres:12-alpine
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      start_period: 20s
+      interval: 30s
+      retries: 5
+      timeout: 5s
+    volumes:
+      - database:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: ${PG_PASS:?database password required}
+      POSTGRES_USER: ${PG_USER:-authentik}
+      POSTGRES_DB: ${PG_DB:-authentik}
+
+  redis:
+    container_name: authentik-redis
+    hostname: redis
+    image: docker.io/library/redis:alpine
+    command: --save 60 1 --loglevel warning
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      start_period: 20s
+      interval: 30s
+      retries: 5
+      timeout: 3s
+    volumes:
+      - redis:/data
+
+  server:
+    container_name: authentik-server
+    hostname: server
+    image: ${AUTHENTIK_IMAGE:-ghcr.io/goauthentik/server}:${AUTHENTIK_TAG:-2023.8.3}
+    restart: unless-stopped
+    command: server
+    environment:
+      AUTHENTIK_REDIS__HOST: redis
+      AUTHENTIK_POSTGRESQL__HOST: postgresql
+      AUTHENTIK_POSTGRESQL__USER: ${PG_USER:-authentik}
+      AUTHENTIK_POSTGRESQL__NAME: ${PG_DB:-authentik}
+      AUTHENTIK_POSTGRESQL__PASSWORD: ${PG_PASS}
+    volumes:
+      - /srv/authentik/media:/media
+      - /srv/authentik/custom-templates:/templates
+    ports:
+      - "${COMPOSE_PORT_HTTP:-9000}:9000"
+      - "${COMPOSE_PORT_HTTPS:-9443}:9443"
+    depends_on:
+      - postgresql
+      - redis
+
+  worker:
+    container_name: authentik-worker
+    hostname: worker
+    image: ${AUTHENTIK_IMAGE:-ghcr.io/goauthentik/server}:${AUTHENTIK_TAG:-2023.8.3}
+    restart: unless-stopped
+    command: worker
+    environment:
+      AUTHENTIK_REDIS__HOST: redis
+      AUTHENTIK_POSTGRESQL__HOST: postgresql
+      AUTHENTIK_POSTGRESQL__USER: ${PG_USER:-authentik}
+      AUTHENTIK_POSTGRESQL__NAME: ${PG_DB:-authentik}
+      AUTHENTIK_POSTGRESQL__PASSWORD: ${PG_PASS}
+    # `user: root` and the docker socket volume are optional.
+    # See more for the docker socket integration here:
+    # https://goauthentik.io/docs/outposts/integrations/docker
+    # Removing `user: root` also prevents the worker from fixing the permissions
+    # on the mounted folders, so when removing this make sure the folders have the correct UID/GID
+    # (1000:1000 by default)
+    user: root
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /srv/authentik/media:/media
+      - /srv/authentik/certs:/certs
+      - /srv/authentik/custom-templates:/templates
+    depends_on:
+      - postgresql
+      - redis
+
+volumes:
+  database:
+    driver: local
+  redis:
+    driver: local
